@@ -1,6 +1,6 @@
 
 name: Check README at commit
-run-name: ${{ github.actor }} is testing out a custom GitHub Action
+run-name: ${{ github.actor }} running action is Massimo Girola in the README?
 on: [push]
 jobs:
   Check-README:
