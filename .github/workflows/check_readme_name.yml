@@ -1,0 +1,43 @@
+
+name: Check README at commit
+run-name: ${{ github.actor }} is testing out a custom GitHub Action
+on: [push]
+jobs:
+  Check-README:
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.check-readme-step.outputs.output1 }}
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - id: check-readme-step  
+        run: |
+          if grep "Massimo Girola" README.md; then
+            echo "output1=Massimo Girola is in the README" >> "$GITHUB_OUTPUT"
+          else
+            echo "output1=Massimo Girola is not in the README" >> "$GITHUB_OUTPUT"
+          fi
+      - run: echo "🍏 This job's status is ${{ job.status }}." 
+      
+  Authorize-the-Commit:
+    runs-on: ubuntu-latest
+    needs: Check-README
+    steps:
+      - env: 
+            OUTPUT1: ${{ needs.Check-README.outputs.output1 }}
+        run: |
+            echo "The output of the previous job was $OUTPUT1"
+            if [ "$OUTPUT1" == "Massimo Girola is in the README" ]; then
+                git config --global user.name "Your Name"
+                git config --global user.email "your-email@example.com"
+                git commit -am "README.md contains Massimo Girola, committing changes."
+                git push
+            else
+                echo "README.md does not contain the name, no commit will be made."
+            fi
+    
