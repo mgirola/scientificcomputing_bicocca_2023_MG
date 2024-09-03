@@ -28,6 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: Check-README
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0 #Apparently I have to clone everything to be able to reset and push
+        - name: Set up Git account #Since this runs remotely I need to set up the git account
+        run: |
+            git config --global user.name "Massimo Girola"
+            git config --global user.email "m.girola2@campus.unimib.it" 
       - env: 
             OUTPUT1: ${{ needs.Check-README.outputs.output1 }}
         run: |
