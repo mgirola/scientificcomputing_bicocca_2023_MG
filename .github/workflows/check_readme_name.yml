@@ -32,12 +32,10 @@ jobs:
             OUTPUT1: ${{ needs.Check-README.outputs.output1 }}
         run: |
             echo "The output of the previous job was $OUTPUT1"
-            if [ "$OUTPUT1" == "Massimo Girola is in the README" ]; then
-                git config --global user.name "Your Name"
-                git config --global user.email "your-email@example.com"
-                git commit -am "README.md contains Massimo Girola, committing changes."
-                git push
+            if ! grep -q "Massimo Girola" README.md; then
+                echo "Error: README.md does not contain 'Massimo Girola'."
+                exit 1
             else
-                echo "README.md does not contain the name, no commit will be made."
+                echo "'Massimo Girola' found in README.md. Proceeding with the commit."
             fi
     
