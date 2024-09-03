@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
             fetch-depth: 0 #Apparently I have to clone everything to be able to reset and push
-        - name: Set up Git account #Since this runs remotely I need to set up the git account
+      - name: Set up Git account #Since this runs remotely I need to set up the git account
         run: |
             git config --global user.name "Massimo Girola"
             git config --global user.email "m.girola2@campus.unimib.it" 
