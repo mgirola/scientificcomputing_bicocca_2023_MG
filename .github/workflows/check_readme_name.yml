@@ -34,6 +34,8 @@ jobs:
             echo "The output of the previous job was $OUTPUT1"
             if ! grep -q "Massimo Girola" README.md; then
                 echo "Error: README.md does not contain 'Massimo Girola'."
+                git reset --hard HEAD~1 #since I cannot run the action before the commit or the push, I need to reset the last commit if the condition is not met. The exercise asks to let commit only if the name is in the README but this is not possible using actions that can happen only after the push.
+                git push --force
                 exit 1
             else
                 echo "'Massimo Girola' found in README.md. Proceeding with the commit."
