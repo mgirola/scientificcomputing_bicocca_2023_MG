@@ -18,7 +18,8 @@ jobs:
       - id: run-pytest-step  
         run: |
           pip install pytest
-          test=$(pytest | tee /dev/tty) # Run pytest and capture output
+          test=$(pytest) # Run pytest and capture output
+          echo "$test"
           if echo "$test" | grep -q "FAILED"; then
             echo "Tests failed"
             echo "::set-output name=output1::fail"
