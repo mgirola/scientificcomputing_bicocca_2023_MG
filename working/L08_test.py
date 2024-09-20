@@ -40,7 +40,7 @@ def evolve_the_economy(initial_state, graph, number_of_days):
         for vertex in vertices:
             ratio = count[vertex]/(day+1) #Dummy edit to test L08_test.py for excercise Q2
             economy_history[vertex].append(ratio)  
-    return [] #stupid error --> action should fail to commit
+    return economy_history
 
 
 
