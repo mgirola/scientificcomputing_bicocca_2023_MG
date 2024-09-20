@@ -17,7 +17,7 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - id: run-pytest-step
         run: |
-          pip install pytest
+          pip install pytest numpy
           pytest --junitxml=pytest_report.xml 2>&1 | tee pytest_output.log # Save output to log file
         continue-on-error: true # Ensure the workflow continues even if tests fail
       - name: Upload Pytest Output and Report
