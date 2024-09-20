@@ -38,7 +38,8 @@ def evolve_the_economy(initial_state, graph, number_of_days):
         state = next_state[0]
         count[state] += 1
         for vertex in vertices:
-            economy_history[vertex].append(count[vertex]/(day+1))  
+            ratio = count[vertex]/(day+1) #Dummy edit to test L08_test.py for excercise Q2
+            economy_history[vertex].append(ratio)  
     return economy_history
 
 
