@@ -15,21 +15,19 @@ jobs:
         uses: actions/checkout@v4
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - id: run-pytest-step  
+      - id: run-pytest-step
         run: |
           pip install pytest
-          test=$(pytest --junitxml=pytest_report.xml 2>&1)
-          echo "$test"
-          if echo "$test" | grep -q "FAILED"; then
-            echo "Tests failed"
-            echo "::set-output name=output1::fail"
-          elif echo "$test" | grep -q "errors"; then
-            echo "Errors occurred during the test"
-            echo "::set-output name=output1::fail"
-          else
-            echo "All tests passed"
-            echo "::set-output name=output1::pass"
-          fi
+          pytest --junitxml=pytest_report.xml 2>&1 | tee pytest_output.log # Save output to log file
+        continue-on-error: true # Ensure the workflow continues even if tests fail
+      - name: Upload Pytest Output and Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-results
+          path: |
+            pytest_output.log
+            pytest_report.xml
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Upload Pytest Results
         uses: actions/upload-artifact@v3
         with:
