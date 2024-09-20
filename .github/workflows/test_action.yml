@@ -1,34 +1,55 @@
-name: Test and Validate Commit
 
+name: Run-Tests
+run-name: ${{ github.actor }} running action test L08 Q2
 on: [push]
-
 jobs:
-  test:
+  Run-Pytest:
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.run-pytest-step.outputs.output1 }}
     steps:
-      - name: Check out the repository
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
         uses: actions/checkout@v4
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - id: run-pytest-step  
         run: |
-          python -m pip install --upgrade pip
-          pip install numpy
-        
-      - name: Run tests
-        run: |
-          python -m unittest discover -s . -p '*test*.py'
-        id: run_tests
+          pip install pytest
+          test=$(pytest | tee /dev/tty) # Run pytest and capture output
+          if echo "$test" | grep -q "FAILED"; then
+            echo "Tests failed"
+            echo "::set-output name=output1::fail"
+          else
+            echo "All tests passed"
+            echo "::set-output name=output1::pass"
+          fi
+      - run: echo "🍏 This job's status is ${{ job.status }}." 
       
-      - name: Fail the build if tests fail
-        if: failure()
+  Authorize-the-Commit:
+    runs-on: ubuntu-latest
+    needs: Run-Pytest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0 #Apparently I have to clone everything to be able to reset and push
+      - name: Set up Git account #Since this runs remotely I need to set up the git account
         run: |
-          echo "Tests failed. Resetting the commit."
-          git reset --hard HEAD~1
-          git push --force
-          exit 1
-          
+            git config --global user.name "Massimo Girola"
+            git config --global user.email "m.girola2@campus.unimib.it" 
+ 
+      - env: 
+          OUTPUT1: ${{ needs.Run-Pytest.outputs.output1 }}
+        run: |
+            echo "The output of the previous job was $OUTPUT1"
+            if [ "$OUTPUT1" = "fail" ]; then
+                echo "Tests not passed."
+                git reset --hard HEAD~1 #since I cannot run the action before the commit or the push, I need to reset the last commit if the condition is not met. The exercise asks to let commit only if the name is in the README but this is not possible using actions that can happen only after the push.
+                git push --force
+                exit 1
+            else
+                echo "Tests were passed. Proceeding with the commit."
+            fi
