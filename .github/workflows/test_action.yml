@@ -18,10 +18,13 @@ jobs:
       - id: run-pytest-step  
         run: |
           pip install pytest
-          test=$(pytest) # Run pytest and capture output
-          echo "$test"
+          test=$(pytest 2>&1) # Capture both stdout and stderr to log any errors
+          echo "$test" # Output the test results to the log for troubleshooting
           if echo "$test" | grep -q "FAILED"; then
             echo "Tests failed"
+            echo "::set-output name=output1::fail"
+          elif echo "$test" | grep -q "errors"; then
+            echo "Errors occurred during the test"
             echo "::set-output name=output1::fail"
           else
             echo "All tests passed"
