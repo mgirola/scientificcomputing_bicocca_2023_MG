@@ -22,3 +22,6 @@ syllabus.out
 _build
 .DS_Store
 lectures/mywrite.txt
+
+dist/
+numba_env/
